@@ -51,6 +51,8 @@
 	</build>
     <modules>
         <module>optimizer-manager</module>
+        <module>optimize-optimizer</module>
+        <module>optimizer-slow</module>
     </modules>
     <dependencies>
 		<dependency>
