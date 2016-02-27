@@ -7,5 +7,28 @@
         <version>1.0</version>
     </parent>
     <artifactId>optimizer-manager</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
+    <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+
+				<configuration>
+					<instructions>
+						<Bundle-Activator>at.christophwurst.optimizer.manager.ManagerActivator</Bundle-Activator>
+						<Export-Package></Export-Package>
+						<Import-Package>
+							org.osgi.framework;version="[1.3,2.0)",
+							org.osgi.util.tracker;version="[1.3,2.0)"
+						</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

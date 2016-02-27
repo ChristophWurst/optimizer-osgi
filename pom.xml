@@ -14,7 +14,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<osgi.deploy.dir>~/Software/apache-karaf-4.0.4/deploy</osgi.deploy.dir>
+		<osgi.deploy.dir>../../../apache-karaf-4.0.4/deploy</osgi.deploy.dir>
 	</properties>
 
 	<build>
