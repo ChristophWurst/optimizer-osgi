@@ -16,6 +16,7 @@
 
 				<configuration>
 					<instructions>
+						<Bundle-Activator>at.christophwurst.optimizer.slow.OptimizerActivator</Bundle-Activator>
 						<Export-Package>at.christophwurst.optimize.slow;version="1.0"</Export-Package>
 						<Import-Package>
 							at.christophwurst.optimize.optimizer;version="[1.0,2.0)",

@@ -14,26 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.christophwurst.optimize.optimizer;
+package at.christophwurst.optimizer.manager;
+
+import at.christophwurst.optimize.optimizer.Optimizer;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  */
-public interface Optimizer {
+public class Manager {
 
-	/**
-	 * Get the name of this optimizer
-	 *
-	 * @return
-	 */
-	public String getName();
+	private static final Logger LOG = Logger.getLogger(Manager.class.getName());
+	private final Vector<Optimizer> optimizers;
 
-	/**
-	 * Start optimizing the given value
-	 *
-	 * @param val
-	 */
-	public void startOptimization(double val);
+	public Manager() {
+		this.optimizers = new Vector<>();
+	}
+
+	public void registerOptimizer(Optimizer optimizer) {
+		optimizers.add(optimizer);
+		LOG.log(Level.INFO, "Optimizer registered: {0}", optimizer.getName());
+	}
+
+	public void unregisterOptimizer(Optimizer optimizer) {
+		optimizers.remove(optimizer);
+		LOG.log(Level.INFO, "Optimizer unregistered: {0}", optimizer.getName());
+	}
 
 }

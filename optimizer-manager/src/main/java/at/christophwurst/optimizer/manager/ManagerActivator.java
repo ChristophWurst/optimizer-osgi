@@ -16,8 +16,10 @@
  */
 package at.christophwurst.optimizer.manager;
 
+import at.christophwurst.optimize.optimizer.Optimizer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  *
@@ -25,14 +27,31 @@ import org.osgi.framework.BundleContext;
  */
 public class ManagerActivator implements BundleActivator {
 
+	private ServiceTracker<Optimizer, Optimizer> optimizerTracker;
+
 	@Override
 	public void start(BundleContext bc) throws Exception {
-		System.out.println("STARTED");
+		System.out.println("Manager started");
+
+		startTrackingOptimzers(bc);
 	}
 
 	@Override
 	public void stop(BundleContext bc) throws Exception {
-		
+
 	}
-	
+
+	private void startTrackingOptimzers(BundleContext bc) {
+		optimizerTracker = new ServiceTracker<>(bc, Optimizer.class, null);
+		optimizerTracker.open();
+
+		Object[] services = optimizerTracker.getServices();
+		if (services != null) {
+			for (Object o : services) {
+				Optimizer opt = (Optimizer)o;
+				System.out.println("Optimizer found: " + opt.getName());
+			}
+		}
+	}
+
 }

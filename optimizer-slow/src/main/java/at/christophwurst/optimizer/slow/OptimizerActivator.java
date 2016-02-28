@@ -14,26 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.christophwurst.optimize.optimizer;
+package at.christophwurst.optimizer.slow;
+
+import at.christophwurst.optimize.optimizer.Optimizer;
+import java.util.logging.Logger;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  */
-public interface Optimizer {
+public class OptimizerActivator implements BundleActivator {
 
-	/**
-	 * Get the name of this optimizer
-	 *
-	 * @return
-	 */
-	public String getName();
+	private static final Logger LOG = Logger.getLogger(OptimizerActivator.class.getName());
 
-	/**
-	 * Start optimizing the given value
-	 *
-	 * @param val
-	 */
-	public void startOptimization(double val);
+	@Override
+	public void start(BundleContext bc) throws Exception {
+		LOG.info("registering slow optimizer");
+		bc.registerService(Optimizer.class, new SlowOptimizer(), null);
+	}
 
+	@Override
+	public void stop(BundleContext bc) throws Exception {
+		// Nothing to do
+	}
+	
 }

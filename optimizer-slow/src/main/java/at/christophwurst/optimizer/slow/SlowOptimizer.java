@@ -25,6 +25,11 @@ import at.christophwurst.optimize.optimizer.Optimizer;
 public class SlowOptimizer implements Optimizer {
 
 	@Override
+	public String getName() {
+		return "Slow Optimizer";
+	}
+
+	@Override
 	public void startOptimization(double val) {
 		System.out.println("slowly optimizing " + val + "…");
 	}
