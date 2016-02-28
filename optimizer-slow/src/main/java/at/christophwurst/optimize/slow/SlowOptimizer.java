@@ -14,34 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.christophwurst.optimizer.manager;
+package at.christophwurst.optimize.slow;
 
 import at.christophwurst.optimize.optimizer.Optimizer;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  */
-public class Manager {
+public class SlowOptimizer implements Optimizer {
 
-	private static final Logger LOG = Logger.getLogger(Manager.class.getName());
-	private final Vector<Optimizer> optimizers;
-
-	public Manager() {
-		this.optimizers = new Vector<>();
+	@Override
+	public String getName() {
+		return "Slow Optimizer";
 	}
 
-	public void registerOptimizer(Optimizer optimizer) {
-		optimizers.add(optimizer);
-		LOG.log(Level.INFO, "Optimizer registered: {0}", optimizer.getName());
-	}
-
-	public void unregisterOptimizer(Optimizer optimizer) {
-		optimizers.remove(optimizer);
-		LOG.log(Level.INFO, "Optimizer unregistered: {0}", optimizer.getName());
+	@Override
+	public void startOptimization(double val) {
+		System.out.println("slowly optimizing " + val + "…");
 	}
 
 }

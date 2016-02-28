@@ -14,44 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.christophwurst.optimizer.manager;
+package at.christophwurst.optimize.slow;
 
 import at.christophwurst.optimize.optimizer.Optimizer;
+import java.util.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  */
-public class ManagerActivator implements BundleActivator {
+public class OptimizerActivator implements BundleActivator {
 
-	private ServiceTracker<Optimizer, Optimizer> optimizerTracker;
+	private static final Logger LOG = Logger.getLogger(OptimizerActivator.class.getName());
 
 	@Override
 	public void start(BundleContext bc) throws Exception {
-		System.out.println("Manager started");
-
-		startTrackingOptimzers(bc);
+		LOG.info("registering slow optimizer");
+		bc.registerService(Optimizer.class, new SlowOptimizer(), null);
 	}
 
 	@Override
 	public void stop(BundleContext bc) throws Exception {
-
+		// Nothing to do
 	}
-
-	private void startTrackingOptimzers(BundleContext bc) {
-		optimizerTracker = new ServiceTracker<>(bc, Optimizer.class, null);
-		optimizerTracker.open();
-
-		Object[] services = optimizerTracker.getServices();
-		if (services != null) {
-			for (Object o : services) {
-				Optimizer opt = (Optimizer)o;
-				System.out.println("Optimizer found: " + opt.getName());
-			}
-		}
-	}
-
+	
 }

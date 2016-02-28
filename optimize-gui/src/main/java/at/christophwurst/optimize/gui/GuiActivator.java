@@ -14,30 +14,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.christophwurst.optimizer.slow;
+package at.christophwurst.optimize.gui;
 
-import at.christophwurst.optimize.optimizer.Optimizer;
-import java.util.logging.Logger;
+import at.christophwurst.optimize.utils.JavaFxUtils;
+import at.christophwurst.optimize.manager.Manager;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  */
-public class OptimizerActivator implements BundleActivator {
+public class GuiActivator implements BundleActivator {
 
-	private static final Logger LOG = Logger.getLogger(OptimizerActivator.class.getName());
+	private OptimizerWindow window;
+	private Manager manager;
+	private ServiceTracker optimizerTracker;
 
 	@Override
 	public void start(BundleContext bc) throws Exception {
-		LOG.info("registering slow optimizer");
-		bc.registerService(Optimizer.class, new SlowOptimizer(), null);
+		JavaFxUtils.initJavaFx();
+		JavaFxUtils.runAndWait(() -> startUI(bc));
+		
+		optimizerTracker = new ServiceTracker(bc, Manager.class, null);
+		optimizerTracker.open();
+		manager = (Manager) optimizerTracker.getService();
+		// TODO: hook up GUI
+		System.out.println("GUI started and registered");
 	}
 
 	@Override
 	public void stop(BundleContext bc) throws Exception {
-		// Nothing to do
+		JavaFxUtils.runAndWait(() -> stopUI(bc));
+		System.out.println("GUI stopped");
 	}
-	
+
+	private void startUI(BundleContext bc) {
+		window = new OptimizerWindow();
+		window.show();
+	}
+
+	private void stopUI(BundleContext bc) {
+		window.close();
+	}
+
 }
