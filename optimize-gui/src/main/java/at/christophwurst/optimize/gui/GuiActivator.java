@@ -18,6 +18,8 @@ package at.christophwurst.optimize.gui;
 
 import at.christophwurst.optimize.utils.JavaFxUtils;
 import at.christophwurst.optimize.manager.Manager;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
@@ -28,20 +30,23 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class GuiActivator implements BundleActivator {
 
+	private static final Logger LOG = Logger.getLogger(GuiActivator.class.getName());
 	private OptimizerWindow window;
-	private Manager manager;
+	private final AtomicReference<Manager> manager = new AtomicReference<>();
 	private ServiceTracker optimizerTracker;
 
 	@Override
 	public void start(BundleContext bc) throws Exception {
-		JavaFxUtils.initJavaFx();
-		JavaFxUtils.runAndWait(() -> startUI(bc));
-		
 		optimizerTracker = new ServiceTracker(bc, Manager.class, null);
 		optimizerTracker.open();
-		manager = (Manager) optimizerTracker.getService();
-		// TODO: hook up GUI
-		System.out.println("GUI started and registered");
+		manager.set((Manager) optimizerTracker.getService());
+		if (manager == null) {
+			LOG.severe("No optimization manager loaded");
+		} else {
+			JavaFxUtils.initJavaFx();
+			JavaFxUtils.runAndWait(() -> startUI(bc));
+			System.out.println("GUI started and registered");
+		}
 	}
 
 	@Override
@@ -51,7 +56,7 @@ public class GuiActivator implements BundleActivator {
 	}
 
 	private void startUI(BundleContext bc) {
-		window = new OptimizerWindow();
+		window = new OptimizerWindow(manager.get());
 		window.show();
 	}
 

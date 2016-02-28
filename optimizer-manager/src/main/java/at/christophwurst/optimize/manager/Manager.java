@@ -34,6 +34,10 @@ public class Manager {
 		this.optimizers = new Vector<>();
 	}
 
+	public Vector<Optimizer> getRegisteredOptimizers() {
+		return optimizers;
+	}
+
 	public void registerOptimizer(Optimizer optimizer) {
 		optimizers.add(optimizer);
 		LOG.log(Level.INFO, "Optimizer registered: {0}", optimizer.getName());

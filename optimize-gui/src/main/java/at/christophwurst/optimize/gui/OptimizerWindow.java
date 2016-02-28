@@ -16,8 +16,18 @@
  */
 package at.christophwurst.optimize.gui;
 
+import at.christophwurst.optimize.manager.Manager;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -27,12 +37,26 @@ import javafx.stage.Stage;
  */
 public class OptimizerWindow {
 
+	private static final Logger LOG = Logger.getLogger(OptimizerWindow.class.getName());
+	private final Manager manager;
 	private Stage stage;
-	private final VBox rootPane;
+	private final HBox rootPane;
 
-	public OptimizerWindow() {
-		Button butt = new Button("HELLO, it's me");
-		rootPane = new VBox(butt);
+	public OptimizerWindow(Manager manager) {
+		this.manager = manager;
+		rootPane = new HBox(getOptimizersPane());
+	}
+
+	private Pane getOptimizersPane() {
+		Label heading = new Label("Available optimizers");
+		LOG.log(Level.INFO, "showing {0} optimizers", manager.getRegisteredOptimizers().size());
+		List<String> optimizerNames = manager.getRegisteredOptimizers().stream().map(o -> {
+			return o.getName();
+		}).collect(Collectors.toList());
+		LOG.log(Level.INFO, "showing {0} optimizers in GUI", optimizerNames.size());
+		ObservableList<String> items = FXCollections.observableArrayList(optimizerNames);
+		ListView<String> optimizers = new ListView<>(items);
+		return new VBox(heading, optimizers);
 	}
 
 	public void show() {

@@ -60,6 +60,7 @@ public class ManagerActivator implements BundleActivator {
 			for (Object o : services) {
 				Optimizer opt = (Optimizer) o;
 				System.out.println("Optimizer found: " + opt.getName());
+				manager.registerOptimizer(opt);
 			}
 		}
 	}
