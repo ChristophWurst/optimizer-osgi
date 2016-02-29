@@ -53,7 +53,8 @@
         <module>optimize-optimizer</module>
         <module>optimizer-slow</module>
     <module>optimize-gui</module>
-  </modules>
+        <module>optimizer-fast</module>
+    </modules>
     <dependencies>
 		<dependency>
 			<groupId>org.apache.felix</groupId>

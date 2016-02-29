@@ -6,7 +6,7 @@
         <artifactId>optimize-osgi</artifactId>
         <version>1.0</version>
     </parent>
-    <artifactId>optimize-slow</artifactId>
+    <artifactId>optimize-fast</artifactId>
     <packaging>bundle</packaging>
     <build>
 		<plugins>
@@ -16,7 +16,7 @@
 
 				<configuration>
 					<instructions>
-						<Bundle-Activator>at.christophwurst.optimize.slow.OptimizerActivator</Bundle-Activator>
+						<Bundle-Activator>at.christophwurst.optimize.fast.OptimizerActivator</Bundle-Activator>
 						<Export-Package></Export-Package>
 						<Import-Package>
 							at.christophwurst.optimize.optimizer;version="[1.0,2.0)",

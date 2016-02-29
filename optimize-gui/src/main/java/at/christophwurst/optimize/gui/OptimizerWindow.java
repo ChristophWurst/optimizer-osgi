@@ -67,7 +67,7 @@ public class OptimizerWindow {
 		p.setPadding(new Insets(10));
 		for (Optimizer opt : manager.getRegisteredOptimizers()) {
 			Label optLbl = new Label(opt.getName());
-			ProgressIndicator prog = new ProgressIndicator(0);
+			ProgressIndicator prog = new ProgressIndicator(opt.getProgress() / 100f);
 			opt.addPropertyChanedListener((PropertyChangeEvent pce) -> {
 				if (pce.getPropertyName().equals("progress")) {
 					int pro = (int) pce.getNewValue();

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package at.christophwurst.optimize.slow;
+package at.christophwurst.optimize.fast;
 
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.beans.PropertyChangeListener;
@@ -40,7 +40,7 @@ public class SlowOptimizer implements Optimizer {
 
 	@Override
 	public String getName() {
-		return "Slow Optimizer";
+		return "Fast Optimizer";
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class SlowOptimizer implements Optimizer {
 			for (int i = 0; i <= 100; i++) {
 				setProgress(i);
 				try {
-					Thread.sleep(200);
+					Thread.sleep(20);
 				} catch (InterruptedException ex) {
 					Logger.getLogger(SlowOptimizer.class.getName()).log(Level.SEVERE, null, ex);
 				}
