@@ -45,14 +45,12 @@ public class GuiActivator implements BundleActivator {
 		} else {
 			JavaFxUtils.initJavaFx();
 			JavaFxUtils.runAndWait(() -> startUI(bc));
-			System.out.println("GUI started and registered");
 		}
 	}
 
 	@Override
 	public void stop(BundleContext bc) throws Exception {
 		JavaFxUtils.runAndWait(() -> stopUI(bc));
-		System.out.println("GUI stopped");
 	}
 
 	private void startUI(BundleContext bc) {

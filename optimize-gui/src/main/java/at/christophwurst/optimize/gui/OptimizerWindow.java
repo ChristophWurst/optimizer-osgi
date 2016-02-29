@@ -17,19 +17,19 @@
 package at.christophwurst.optimize.gui;
 
 import at.christophwurst.optimize.manager.Manager;
-import java.util.List;
-import java.util.logging.Level;
+import at.christophwurst.optimize.optimizer.Optimizer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -44,27 +44,15 @@ public class OptimizerWindow {
 	private static final Logger LOG = Logger.getLogger(OptimizerWindow.class.getName());
 	private final Manager manager;
 	private Stage stage;
-	private final HBox rootPane;
+	private final VBox rootPane;
 	private TextField input;
 	private Button submitBtn;
 
 	public OptimizerWindow(Manager manager) {
 		this.manager = manager;
-		rootPane = new HBox(getOptimizersPane(), getInputPane());
+		rootPane = new VBox(getInputPane(), getOptimizerPane());
 	}
 
-	private Pane getOptimizersPane() {
-		Label heading = new Label("Available optimizers");
-		LOG.log(Level.INFO, "showing {0} optimizers", manager.getRegisteredOptimizers().size());
-		List<String> optimizerNames = manager.getRegisteredOptimizers().stream().map(o -> {
-			return o.getName();
-		}).collect(Collectors.toList());
-		LOG.log(Level.INFO, "showing {0} optimizers in GUI", optimizerNames.size());
-		ObservableList<String> items = FXCollections.observableArrayList(optimizerNames);
-		ListView<String> optimizers = new ListView<>(items);
-		return new VBox(heading, optimizers);
-	}
-	
 	private Pane getInputPane() {
 		input = new TextField("16.3");
 		submitBtn = new Button("optimize");
@@ -73,7 +61,27 @@ public class OptimizerWindow {
 		});
 		return new HBox(input, submitBtn);
 	}
-	
+
+	private Pane getOptimizerPane() {
+		Pane p = new FlowPane();
+		p.setPadding(new Insets(10));
+		for (Optimizer opt : manager.getRegisteredOptimizers()) {
+			Label optLbl = new Label(opt.getName());
+			ProgressIndicator prog = new ProgressIndicator(0);
+			opt.addPropertyChanedListener((PropertyChangeEvent pce) -> {
+				if (pce.getPropertyName().equals("progress")) {
+					int pro = (int) pce.getNewValue();
+					prog.setProgress(pro / 100f);
+				}
+			});
+			BorderPane elem = new BorderPane();
+			elem.setTop(optLbl);
+			elem.setCenter(prog);
+			p.getChildren().add(elem);
+		}
+		return p;
+	}
+
 	private void startOptimization() {
 		double val = Double.parseDouble(input.getText());
 		System.out.println("OPT " + val);
