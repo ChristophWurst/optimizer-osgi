@@ -18,6 +18,7 @@ package at.christophwurst.optimize.manager;
 
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,9 +30,19 @@ public class Manager {
 
 	private static final Logger LOG = Logger.getLogger(Manager.class.getName());
 	private final Vector<Optimizer> optimizers;
+	private final AtomicBoolean isRunning;
 
 	public Manager() {
 		this.optimizers = new Vector<>();
+		this.isRunning = new AtomicBoolean(false);
+	}
+
+	public void optimize(double val) {
+		this.isRunning.set(true);
+		for (Optimizer opt : (Vector<Optimizer>) optimizers.clone()) {
+			System.out.println("starting optimization of " + val + " on " + opt.getName());
+			opt.startOptimization(val);
+		}
 	}
 
 	public Vector<Optimizer> getRegisteredOptimizers() {

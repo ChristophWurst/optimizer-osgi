@@ -16,6 +16,8 @@
  */
 package at.christophwurst.optimize.optimizer;
 
+import java.beans.PropertyChangeListener;
+
 /**
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -35,5 +37,26 @@ public interface Optimizer {
 	 * @param val
 	 */
 	public void startOptimization(double val);
+
+	/**
+	 * Get current progress of optimization
+	 *
+	 * @return
+	 */
+	public int getProgress();
+
+	/**
+	 * Register a new PropertyChangedListener
+	 *
+	 * @param listener
+	 */
+	public void addPropertyChanedListener(PropertyChangeListener listener);
+
+	/**
+	 * unregister a PropertyChangedListener
+	 *
+	 * @param listener
+	 */
+	public void removePropertyChanedListener(PropertyChangeListener listener);
 
 }

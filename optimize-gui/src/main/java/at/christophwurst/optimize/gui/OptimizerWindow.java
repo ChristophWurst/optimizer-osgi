@@ -23,9 +23,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -41,10 +45,12 @@ public class OptimizerWindow {
 	private final Manager manager;
 	private Stage stage;
 	private final HBox rootPane;
+	private TextField input;
+	private Button submitBtn;
 
 	public OptimizerWindow(Manager manager) {
 		this.manager = manager;
-		rootPane = new HBox(getOptimizersPane());
+		rootPane = new HBox(getOptimizersPane(), getInputPane());
 	}
 
 	private Pane getOptimizersPane() {
@@ -57,6 +63,21 @@ public class OptimizerWindow {
 		ObservableList<String> items = FXCollections.observableArrayList(optimizerNames);
 		ListView<String> optimizers = new ListView<>(items);
 		return new VBox(heading, optimizers);
+	}
+	
+	private Pane getInputPane() {
+		input = new TextField("16.3");
+		submitBtn = new Button("optimize");
+		submitBtn.setOnAction((ActionEvent t) -> {
+			startOptimization();
+		});
+		return new HBox(input, submitBtn);
+	}
+	
+	private void startOptimization() {
+		double val = Double.parseDouble(input.getText());
+		System.out.println("OPT " + val);
+		manager.optimize(val);
 	}
 
 	public void show() {
