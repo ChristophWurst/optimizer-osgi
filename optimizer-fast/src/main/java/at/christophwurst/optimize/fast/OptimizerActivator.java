@@ -32,7 +32,7 @@ public class OptimizerActivator implements BundleActivator {
 	@Override
 	public void start(BundleContext bc) throws Exception {
 		LOG.info("registering slow optimizer");
-		bc.registerService(Optimizer.class, new SlowOptimizer(), null);
+		bc.registerService(Optimizer.class, new FastOptimizer(), null);
 	}
 
 	@Override

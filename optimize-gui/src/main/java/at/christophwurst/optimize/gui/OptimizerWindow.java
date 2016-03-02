@@ -19,7 +19,6 @@ package at.christophwurst.optimize.gui;
 import at.christophwurst.optimize.manager.Manager;
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -59,6 +58,12 @@ public class OptimizerWindow {
 		submitBtn.setOnAction((ActionEvent t) -> {
 			startOptimization();
 		});
+		submitBtn.setDisable(manager.isRunning());
+		System.out.println("manager running: " + manager.isRunning());
+		manager.addPropertyChangedListener((PropertyChangeEvent pce) -> {
+			System.out.println("E manager running: " + manager.isRunning());
+			submitBtn.setDisable(!(boolean) pce.getNewValue());
+		});
 		return new HBox(input, submitBtn);
 	}
 
@@ -68,7 +73,7 @@ public class OptimizerWindow {
 		for (Optimizer opt : manager.getRegisteredOptimizers()) {
 			Label optLbl = new Label(opt.getName());
 			ProgressIndicator prog = new ProgressIndicator(opt.getProgress() / 100f);
-			opt.addPropertyChanedListener((PropertyChangeEvent pce) -> {
+			opt.addPropertyChangedListener((PropertyChangeEvent pce) -> {
 				if (pce.getPropertyName().equals("progress")) {
 					int pro = (int) pce.getNewValue();
 					prog.setProgress(pro / 100f);

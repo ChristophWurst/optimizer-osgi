@@ -17,6 +17,8 @@
 package at.christophwurst.optimize.manager;
 
 import at.christophwurst.optimize.optimizer.Optimizer;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -29,20 +31,32 @@ import java.util.logging.Logger;
 public class Manager {
 
 	private static final Logger LOG = Logger.getLogger(Manager.class.getName());
+	private final PropertyChangeSupport changed;
 	private final Vector<Optimizer> optimizers;
 	private final AtomicBoolean isRunning;
 
 	public Manager() {
+		changed = new PropertyChangeSupport(this);
 		this.optimizers = new Vector<>();
 		this.isRunning = new AtomicBoolean(false);
 	}
 
 	public void optimize(double val) {
-		this.isRunning.set(true);
+		setRunning(true);
 		for (Optimizer opt : (Vector<Optimizer>) optimizers.clone()) {
 			System.out.println("starting optimization of " + val + " on " + opt.getName());
 			opt.startOptimization(val);
 		}
+	}
+
+	public boolean isRunning() {
+		return isRunning.get();
+	}
+
+	private void setRunning(boolean val) {
+		boolean oldVal = isRunning.get();
+		isRunning.set(val);
+		changed.firePropertyChange("running", oldVal, val);
 	}
 
 	public Vector<Optimizer> getRegisteredOptimizers() {
@@ -57,6 +71,14 @@ public class Manager {
 	public void unregisterOptimizer(Optimizer optimizer) {
 		optimizers.remove(optimizer);
 		LOG.log(Level.INFO, "Optimizer unregistered: {0}", optimizer.getName());
+	}
+
+	public void addPropertyChangedListener(PropertyChangeListener listener) {
+		changed.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangedListener(PropertyChangeListener listener) {
+		changed.removePropertyChangeListener(listener);
 	}
 
 }

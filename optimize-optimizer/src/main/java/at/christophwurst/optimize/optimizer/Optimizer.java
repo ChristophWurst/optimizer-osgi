@@ -46,17 +46,24 @@ public interface Optimizer {
 	public int getProgress();
 
 	/**
+	 * Returns whether an optimization is running
+	 *
+	 * @return
+	 */
+	public boolean isRunning();
+
+	/**
 	 * Register a new PropertyChangedListener
 	 *
 	 * @param listener
 	 */
-	public void addPropertyChanedListener(PropertyChangeListener listener);
+	public void addPropertyChangedListener(PropertyChangeListener listener);
 
 	/**
 	 * unregister a PropertyChangedListener
 	 *
 	 * @param listener
 	 */
-	public void removePropertyChanedListener(PropertyChangeListener listener);
+	public void removePropertyChangedListener(PropertyChangeListener listener);
 
 }

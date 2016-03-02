@@ -19,6 +19,7 @@ package at.christophwurst.optimize.slow;
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,11 +32,13 @@ public class SlowOptimizer implements Optimizer {
 
 	protected final PropertyChangeSupport changer;
 	protected final AtomicInteger progress;
+	protected final AtomicBoolean running;
 	protected Thread worker;
 
 	public SlowOptimizer() {
 		changer = new PropertyChangeSupport(this);
-		this.progress = new AtomicInteger(0);
+		progress = new AtomicInteger(0);
+		running = new AtomicBoolean(false);
 	}
 
 	@Override
@@ -45,6 +48,7 @@ public class SlowOptimizer implements Optimizer {
 
 	@Override
 	public void startOptimization(double val) {
+		setRunning(true);
 		worker = new Thread(() -> {
 			for (int i = 0; i <= 100; i++) {
 				setProgress(i);
@@ -54,8 +58,20 @@ public class SlowOptimizer implements Optimizer {
 					Logger.getLogger(SlowOptimizer.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
+			setRunning(false);
 		});
 		worker.start();
+	}
+
+	@Override
+	public boolean isRunning() {
+		return running.get();
+	}
+
+	private void setRunning(boolean val) {
+		boolean oldVal = running.get();
+		running.set(val);
+		changer.firePropertyChange("running", oldVal, val);
 	}
 
 	@Override
@@ -70,12 +86,12 @@ public class SlowOptimizer implements Optimizer {
 	}
 
 	@Override
-	public void addPropertyChanedListener(PropertyChangeListener listener) {
+	public void addPropertyChangedListener(PropertyChangeListener listener) {
 		changer.addPropertyChangeListener(listener);
 	}
 
 	@Override
-	public void removePropertyChanedListener(PropertyChangeListener listener) {
+	public void removePropertyChangedListener(PropertyChangeListener listener) {
 		changer.removePropertyChangeListener(listener);
 	}
 
