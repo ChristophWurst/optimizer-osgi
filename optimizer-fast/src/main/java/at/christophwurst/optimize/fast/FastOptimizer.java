@@ -16,11 +16,7 @@
  */
 package at.christophwurst.optimize.fast;
 
-import at.christophwurst.optimize.optimizer.Optimizer;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import at.christophwurst.optimize.optimizer.SimpleOptimizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,18 +24,7 @@ import java.util.logging.Logger;
  *
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  */
-public class FastOptimizer implements Optimizer {
-
-	protected final PropertyChangeSupport changer;
-	protected final AtomicInteger progress;
-	protected final AtomicBoolean running;
-	protected Thread worker;
-
-	public FastOptimizer() {
-		changer = new PropertyChangeSupport(this);
-		progress = new AtomicInteger(0);
-		running = new AtomicBoolean(false);
-	}
+public class FastOptimizer extends SimpleOptimizer {
 
 	@Override
 	public String getName() {
@@ -47,52 +32,20 @@ public class FastOptimizer implements Optimizer {
 	}
 
 	@Override
-	public void startOptimization(double val) {
-		setRunning(true);
-		worker = new Thread(() -> {
+	protected Thread getWorkerThread(double val) {
+		return new Thread(() -> {
 			for (int i = 0; i <= 100; i++) {
 				setProgress(i);
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException ex) {
+					System.err.println("fast optimizer thread interrupted exception");
 					Logger.getLogger(FastOptimizer.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
 			setRunning(false);
+			worker = null;
 		});
-		worker.start();
-	}
-
-	@Override
-	public boolean isRunning() {
-		return running.get();
-	}
-
-	private void setRunning(boolean val) {
-		boolean oldVal = running.get();
-		running.set(val);
-		changer.firePropertyChange("running", oldVal, val);
-	}
-
-	@Override
-	public int getProgress() {
-		return progress.get();
-	}
-
-	private void setProgress(int val) {
-		int oldVal = progress.get();
-		progress.set(val);
-		changer.firePropertyChange("progress", oldVal, val);
-	}
-
-	@Override
-	public void addPropertyChangedListener(PropertyChangeListener listener) {
-		changer.addPropertyChangeListener(listener);
-	}
-
-	@Override
-	public void removePropertyChangedListener(PropertyChangeListener listener) {
-		changer.removePropertyChangeListener(listener);
 	}
 
 }
