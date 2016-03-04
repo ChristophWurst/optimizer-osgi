@@ -37,7 +37,7 @@ public class SlowOptimizer extends SimpleOptimizer {
 			for (int i = 0; i <= 100; i++) {
 				setProgress(i);
 				try {
-					Thread.sleep(200);
+					Thread.sleep(40);
 				} catch (InterruptedException ex) {
 					System.err.println("slow optimizer thread interrupted exception");
 					Logger.getLogger(SlowOptimizer.class.getName()).log(Level.SEVERE, null, ex);
