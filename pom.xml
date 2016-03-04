@@ -48,14 +48,14 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-    <modules>
-        <module>optimizer-manager</module>
-        <module>optimize-optimizer</module>
-        <module>optimizer-slow</module>
-    <module>optimize-gui</module>
-        <module>optimizer-fast</module>
-    </modules>
-    <dependencies>
+	<modules>
+		<module>optimize-manager</module>
+		<module>optimize-optimizer</module>
+		<module>optimize-slow</module>
+		<module>optimize-gui</module>
+		<module>optimize-fast</module>
+	</modules>
+	<dependencies>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.framework</artifactId>

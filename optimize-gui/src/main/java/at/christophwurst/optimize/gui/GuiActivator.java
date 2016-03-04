@@ -18,7 +18,8 @@ package at.christophwurst.optimize.gui;
 
 import at.christophwurst.optimize.utils.JavaFxUtils;
 import at.christophwurst.optimize.manager.Manager;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -40,6 +41,13 @@ public class GuiActivator implements BundleActivator {
 		window = new OptimizerWindow();
 		optimizerTracker = new ServiceTracker(bc, Manager.class, new ManagerTrackerCustomizer(bc, window));
 		optimizerTracker.open();
+
+		String[] topics = {
+			"at/christophwurst/optimize/manager/FINISHED"
+		};
+		Dictionary props = new Hashtable();
+		props.put(EventConstants.EVENT_TOPIC, topics);
+
 		System.out.println("gui activator started");
 	}
 

@@ -3,3 +3,6 @@
 /optimizer-slow/target/
 /optimize-gui/target/
 /optimizer-fast/target/
+/optimize-fast/target/
+/optimize-manager/target/
+/optimize-slow/target/
