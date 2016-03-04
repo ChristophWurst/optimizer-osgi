@@ -19,6 +19,9 @@ package at.christophwurst.optimize.gui;
 import at.christophwurst.optimize.manager.Manager;
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -33,6 +36,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.osgi.service.event.Event;
 
 /**
  *
@@ -40,21 +44,67 @@ import javafx.stage.Stage;
  */
 public class OptimizerWindow {
 
+	private class OptimizerElement extends BorderPane {
+
+		private final Optimizer optimizer;
+		private final Label label;
+		private final ProgressIndicator progress;
+		private PropertyChangeListener changeListener;
+
+		public OptimizerElement(Optimizer optimizer) {
+			super();
+			this.optimizer = optimizer;
+			this.label = new Label(optimizer.getName());
+			this.progress = new ProgressIndicator(getProgress());
+			super.setTop(label);
+			super.setCenter(progress);
+
+			registerEvents();
+		}
+
+		private float getProgress() {
+			return optimizer.getProgress() / 100f;
+		}
+
+		private void registerEvents() {
+			changeListener = (PropertyChangeEvent pce) -> {
+				progress.setProgress(getProgress());
+			};
+			optimizer.addPropertyChangedListener(changeListener);
+		}
+
+		public void unregisterEvents() {
+			optimizer.removePropertyChangedListener(changeListener);
+		}
+
+	}
+
 	private static final Logger LOG = Logger.getLogger(OptimizerWindow.class.getName());
 	private Manager manager;
+	private final Map<Optimizer, OptimizerElement> optimizers;
 	private Stage stage;
 	private final Pane rootPane;
+	private Pane optimizersPane;
 	private TextField input;
 	private Button submitBtn;
 
 	public OptimizerWindow() {
+		optimizers = new HashMap<>();
 		rootPane = new VBox();
 	}
 
 	private void showManagerPane() {
 		System.out.println("showing manager pane");
 		rootPane.getChildren().clear();
-		rootPane.getChildren().addAll(getInputPane(), getOptimizerPane());
+
+		optimizersPane = new FlowPane();
+		optimizersPane.setPadding(new Insets(10));
+
+		for (Optimizer o : manager.getRegisteredOptimizers()) {
+			addOptimizer(o);
+		}
+
+		rootPane.getChildren().addAll(getInputPane(), optimizersPane);
 		show();
 	}
 
@@ -66,31 +116,7 @@ public class OptimizerWindow {
 		});
 		submitBtn.setDisable(manager.isRunning());
 		System.out.println("manager running: " + manager.isRunning());
-		manager.addPropertyChangedListener((PropertyChangeEvent pce) -> {
-			System.out.println("E manager running: " + manager.isRunning());
-			submitBtn.setDisable(!(boolean) pce.getNewValue());
-		});
 		return new HBox(input, submitBtn);
-	}
-
-	private Pane getOptimizerPane() {
-		Pane p = new FlowPane();
-		p.setPadding(new Insets(10));
-		for (Optimizer opt : manager.getRegisteredOptimizers()) {
-			Label optLbl = new Label(opt.getName());
-			ProgressIndicator prog = new ProgressIndicator(opt.getProgress() / 100f);
-			opt.addPropertyChangedListener((PropertyChangeEvent pce) -> {
-				if (pce.getPropertyName().equals("progress")) {
-					int pro = (int) pce.getNewValue();
-					prog.setProgress(pro / 100f);
-				}
-			});
-			BorderPane elem = new BorderPane();
-			elem.setTop(optLbl);
-			elem.setCenter(prog);
-			p.getChildren().add(elem);
-		}
-		return p;
 	}
 
 	private void startOptimization() {
@@ -124,8 +150,46 @@ public class OptimizerWindow {
 		this.manager = manager;
 		if (manager == null) {
 			close();
+			// TODO: unregister all optimizers
 		} else {
 			showManagerPane();
+		}
+	}
+
+	private void addOptimizer(Optimizer optimizer) {
+		if (optimizersPane == null || optimizers.containsKey(optimizer)) {
+			// Nothing to do
+			return;
+		}
+
+		OptimizerElement elem = new OptimizerElement(optimizer);
+		optimizers.put(optimizer, elem);
+		optimizersPane.getChildren().add(elem);
+	}
+
+	private void removeOptimizer(Optimizer optimizer) {
+		if (optimizersPane == null || !optimizers.containsKey(optimizer)) {
+			// Nothing to do
+			return;
+		}
+
+		OptimizerElement elem = optimizers.remove(optimizer);
+		elem.unregisterEvents();
+		optimizersPane.getChildren().remove(elem);
+	}
+
+	void processEvent(Event event) {
+		System.out.println("Event received: " + event.getTopic());
+		Optimizer optimizer;
+		switch (event.getTopic()) {
+			case "at/christophwurst/optimize/manager/optimizer/ADDED":
+				optimizer = (Optimizer) event.getProperty("optimizer");
+				addOptimizer(optimizer);
+				break;
+			case "at/christophwurst/optimize/manager/optimizer/REMOVED":
+				optimizer = (Optimizer) event.getProperty("optimizer");
+				removeOptimizer(optimizer);
+				break;
 		}
 	}
 

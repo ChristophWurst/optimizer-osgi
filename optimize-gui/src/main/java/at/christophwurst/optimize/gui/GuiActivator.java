@@ -23,6 +23,9 @@ import java.util.Hashtable;
 import java.util.logging.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -43,10 +46,17 @@ public class GuiActivator implements BundleActivator {
 		optimizerTracker.open();
 
 		String[] topics = {
-			"at/christophwurst/optimize/manager/FINISHED"
+			"at/christophwurst/optimize/manager/FINISHED",
+			"at/christophwurst/optimize/manager/optimizer/ADDED",
+			"at/christophwurst/optimize/manager/optimizer/REMOVED"
 		};
 		Dictionary props = new Hashtable();
 		props.put(EventConstants.EVENT_TOPIC, topics);
+		bc.registerService(EventHandler.class, (EventHandler) (Event event) -> {
+			JavaFxUtils.runLater(() -> {
+				window.processEvent(event);
+			});
+		}, props);
 
 		System.out.println("gui activator started");
 	}

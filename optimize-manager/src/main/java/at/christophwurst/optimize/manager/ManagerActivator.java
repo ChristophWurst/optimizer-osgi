@@ -19,6 +19,8 @@ package at.christophwurst.optimize.manager;
 import at.christophwurst.optimize.optimizer.Optimizer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -34,12 +36,19 @@ public class ManagerActivator implements BundleActivator {
 	public void start(BundleContext bc) throws Exception {
 		System.out.println("Starting manager");
 
-		manager = new Manager();
+		ServiceReference<EventAdmin> ref = bc.getServiceReference(EventAdmin.class);
+		if (ref != null) {
+			EventAdmin eventAdmin = bc.getService(ref);
+			
+			manager = new Manager(eventAdmin);
 
-		registerManagerService(bc);
-		startTrackingOptimzers(bc);
+			registerManagerService(bc);
+			startTrackingOptimzers(bc);
 
-		System.out.println("Manager started");
+			System.out.println("Manager started");
+		} else {
+			System.err.println("Cannot start optimize-manager because EventAdmin has not been loaded");
+		}
 	}
 
 	@Override

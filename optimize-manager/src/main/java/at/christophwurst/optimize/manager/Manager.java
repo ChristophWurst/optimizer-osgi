@@ -19,10 +19,14 @@ package at.christophwurst.optimize.manager;
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 
 /**
  *
@@ -32,11 +36,13 @@ public class Manager {
 
 	private static final Logger LOG = Logger.getLogger(Manager.class.getName());
 	private final PropertyChangeSupport changed;
+	private final EventAdmin eventAdmin;
 	private final Vector<Optimizer> optimizers;
 	private final AtomicBoolean isRunning;
 
-	public Manager() {
+	public Manager(EventAdmin eventAdmin) {
 		changed = new PropertyChangeSupport(this);
+		this.eventAdmin = eventAdmin;
 		this.optimizers = new Vector<>();
 		this.isRunning = new AtomicBoolean(false);
 	}
@@ -65,11 +71,23 @@ public class Manager {
 
 	public void registerOptimizer(Optimizer optimizer) {
 		optimizers.add(optimizer);
+
+		Dictionary props = new Hashtable();
+		props.put("optimizer", optimizer);
+		Event e = new Event("at/christophwurst/optimize/manager/optimizer/ADDED", props);
+		eventAdmin.postEvent(e);
+
 		LOG.log(Level.INFO, "Optimizer registered: {0}", optimizer.getName());
 	}
 
 	public void unregisterOptimizer(Optimizer optimizer) {
 		optimizers.remove(optimizer);
+
+		Dictionary props = new Hashtable();
+		props.put("optimizer", optimizer);
+		Event e = new Event("at/christophwurst/optimize/manager/optimizer/REMOVED", props);
+		eventAdmin.postEvent(e);
+
 		LOG.log(Level.INFO, "Optimizer unregistered: {0}", optimizer.getName());
 	}
 
