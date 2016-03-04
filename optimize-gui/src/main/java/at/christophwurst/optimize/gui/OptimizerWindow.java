@@ -41,15 +41,21 @@ import javafx.stage.Stage;
 public class OptimizerWindow {
 
 	private static final Logger LOG = Logger.getLogger(OptimizerWindow.class.getName());
-	private final Manager manager;
+	private Manager manager;
 	private Stage stage;
-	private final VBox rootPane;
+	private final Pane rootPane;
 	private TextField input;
 	private Button submitBtn;
 
-	public OptimizerWindow(Manager manager) {
-		this.manager = manager;
-		rootPane = new VBox(getInputPane(), getOptimizerPane());
+	public OptimizerWindow() {
+		rootPane = new VBox();
+	}
+
+	private void showManagerPane() {
+		System.out.println("showing manager pane");
+		rootPane.getChildren().clear();
+		rootPane.getChildren().addAll(getInputPane(), getOptimizerPane());
+		show();
 	}
 
 	private Pane getInputPane() {
@@ -107,6 +113,19 @@ public class OptimizerWindow {
 	public void close() {
 		if (stage != null) {
 			stage.close();
+		}
+	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public void setManager(Manager manager) {
+		this.manager = manager;
+		if (manager == null) {
+			close();
+		} else {
+			showManagerPane();
 		}
 	}
 

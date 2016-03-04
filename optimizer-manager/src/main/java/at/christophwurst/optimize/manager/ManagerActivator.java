@@ -52,17 +52,8 @@ public class ManagerActivator implements BundleActivator {
 	}
 
 	private void startTrackingOptimzers(BundleContext bc) {
-		optimizerTracker = new ServiceTracker<>(bc, Optimizer.class, null);
+		optimizerTracker = new ServiceTracker<>(bc, Optimizer.class, new OptimizerTrackerCustomizer(bc, manager));
 		optimizerTracker.open();
-
-		Object[] services = optimizerTracker.getServices();
-		if (services != null) {
-			for (Object o : services) {
-				Optimizer opt = (Optimizer) o;
-				System.out.println("Optimizer found: " + opt.getName());
-				manager.registerOptimizer(opt);
-			}
-		}
 	}
 
 }

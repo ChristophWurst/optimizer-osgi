@@ -32,30 +32,20 @@ public class GuiActivator implements BundleActivator {
 
 	private static final Logger LOG = Logger.getLogger(GuiActivator.class.getName());
 	private OptimizerWindow window;
-	private final AtomicReference<Manager> manager = new AtomicReference<>();
 	private ServiceTracker optimizerTracker;
 
 	@Override
 	public void start(BundleContext bc) throws Exception {
-		optimizerTracker = new ServiceTracker(bc, Manager.class, null);
+		JavaFxUtils.initJavaFx();
+		window = new OptimizerWindow();
+		optimizerTracker = new ServiceTracker(bc, Manager.class, new ManagerTrackerCustomizer(bc, window));
 		optimizerTracker.open();
-		manager.set((Manager) optimizerTracker.getService());
-		if (manager == null) {
-			LOG.severe("No optimization manager loaded");
-		} else {
-			JavaFxUtils.initJavaFx();
-			JavaFxUtils.runAndWait(() -> startUI(bc));
-		}
+		System.out.println("gui activator started");
 	}
 
 	@Override
 	public void stop(BundleContext bc) throws Exception {
 		JavaFxUtils.runAndWait(() -> stopUI(bc));
-	}
-
-	private void startUI(BundleContext bc) {
-		window = new OptimizerWindow(manager.get());
-		window.show();
 	}
 
 	private void stopUI(BundleContext bc) {
