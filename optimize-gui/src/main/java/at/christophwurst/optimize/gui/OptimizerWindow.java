@@ -100,9 +100,7 @@ public class OptimizerWindow {
 		optimizersPane = new FlowPane();
 		optimizersPane.setPadding(new Insets(10));
 
-		for (Optimizer o : manager.getRegisteredOptimizers()) {
-			addOptimizer(o);
-		}
+		manager.getRegisteredOptimizers().stream().forEach(this::addOptimizer);
 
 		rootPane.getChildren().addAll(getInputPane(), optimizersPane);
 		show();
@@ -182,6 +180,14 @@ public class OptimizerWindow {
 		System.out.println("Event received: " + event.getTopic());
 		Optimizer optimizer;
 		switch (event.getTopic()) {
+			case "at/christophwurst/optimize/manager/STARTED":
+				input.setDisable(true);
+				submitBtn.setDisable(true);
+				break;
+			case "at/christophwurst/optimize/manager/FINISHED":
+				input.setDisable(false);
+				submitBtn.setDisable(false);
+				break;
 			case "at/christophwurst/optimize/manager/optimizer/ADDED":
 				optimizer = (Optimizer) event.getProperty("optimizer");
 				addOptimizer(optimizer);

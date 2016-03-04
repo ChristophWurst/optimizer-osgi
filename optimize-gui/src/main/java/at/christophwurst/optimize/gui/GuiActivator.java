@@ -46,6 +46,7 @@ public class GuiActivator implements BundleActivator {
 		optimizerTracker.open();
 
 		String[] topics = {
+			"at/christophwurst/optimize/manager/STARTED",
 			"at/christophwurst/optimize/manager/FINISHED",
 			"at/christophwurst/optimize/manager/optimizer/ADDED",
 			"at/christophwurst/optimize/manager/optimizer/REMOVED"
