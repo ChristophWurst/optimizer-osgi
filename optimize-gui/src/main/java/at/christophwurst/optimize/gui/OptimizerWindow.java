@@ -163,7 +163,11 @@ public class OptimizerWindow {
 		this.manager = manager;
 		if (manager == null) {
 			close();
-			// TODO: unregister all optimizers
+			optimizersPane.getChildren().clear();
+			optimizers.forEach((opt, elem) -> {
+				elem.unregisterEvents();
+			});
+			optimizers.clear();
 		} else {
 			showManagerPane();
 		}
