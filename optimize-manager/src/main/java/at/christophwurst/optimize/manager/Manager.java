@@ -19,13 +19,13 @@ package at.christophwurst.optimize.manager;
 import at.christophwurst.optimize.optimizer.Optimizer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.osgi.service.event.Event;
@@ -42,15 +42,18 @@ public class Manager {
 	private final Vector<Optimizer> optimizers;
 	private final Map<Optimizer, PropertyChangeListener> changeListeners;
 	private final AtomicBoolean isRunning;
+	private final AtomicReference<Double> optimizationInput;
 
 	public Manager(EventAdmin eventAdmin) {
 		this.eventAdmin = eventAdmin;
 		optimizers = new Vector<>();
 		changeListeners = new HashMap<>();
 		isRunning = new AtomicBoolean(false);
+		optimizationInput = new AtomicReference<>(new Double(0.0));
 	}
 
 	public void optimize(double val) {
+		optimizationInput.set(val);
 		Event e = new Event("at/christophwurst/optimize/manager/STARTED", new HashMap<>());
 		eventAdmin.postEvent(e);
 
@@ -97,6 +100,11 @@ public class Manager {
 		};
 		optimizer.addPropertyChangedListener(listener);
 		changeListeners.put(optimizer, listener);
+
+		if (isRunning()) {
+			// Start optimization on this optimizer
+			optimizer.startOptimization(optimizationInput.get());
+		}
 
 		LOG.log(Level.INFO, "Optimizer registered: {0}", optimizer.getName());
 	}
