@@ -58,8 +58,6 @@ public class GuiActivator implements BundleActivator {
 				window.processEvent(event);
 			});
 		}, props);
-
-		System.out.println("gui activator started");
 	}
 
 	@Override

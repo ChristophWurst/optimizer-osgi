@@ -58,10 +58,9 @@ public class Manager {
 		eventAdmin.postEvent(e);
 
 		setRunning(true);
-		for (Optimizer opt : (Vector<Optimizer>) optimizers.clone()) {
-			System.out.println("starting optimization of " + val + " on " + opt.getName());
+		((Vector<Optimizer>) optimizers.clone()).stream().forEach((opt) -> {
 			opt.startOptimization(val);
-		}
+		});
 	}
 
 	public boolean isRunning() {

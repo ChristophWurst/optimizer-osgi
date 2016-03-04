@@ -44,8 +44,6 @@ public class ManagerActivator implements BundleActivator {
 
 			registerManagerService(bc);
 			startTrackingOptimzers(bc);
-
-			System.out.println("Manager started");
 		} else {
 			System.err.println("Cannot start optimize-manager because EventAdmin has not been loaded");
 		}

@@ -109,7 +109,6 @@ public class OptimizerWindow {
 	}
 
 	private void showManagerPane() {
-		System.out.println("showing manager pane");
 		rootPane.getChildren().clear();
 
 		optimizersPane = new FlowPane();
@@ -128,13 +127,11 @@ public class OptimizerWindow {
 			startOptimization();
 		});
 		submitBtn.setDisable(manager.isRunning());
-		System.out.println("manager running: " + manager.isRunning());
 		return new HBox(input, submitBtn);
 	}
 
 	private void startOptimization() {
 		double val = Double.parseDouble(input.getText());
-		System.out.println("OPT " + val);
 		manager.optimize(val);
 	}
 

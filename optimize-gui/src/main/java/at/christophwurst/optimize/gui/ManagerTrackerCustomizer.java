@@ -46,7 +46,6 @@ public class ManagerTrackerCustomizer implements ServiceTrackerCustomizer<Manage
 			JavaFxUtils.runAndWait(() -> {
 				window.setManager(mgr);
 			});
-			System.out.println("Manager added");
 		} catch (InterruptedException | ExecutionException ex) {
 			Logger.getLogger(ManagerTrackerCustomizer.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -59,7 +58,6 @@ public class ManagerTrackerCustomizer implements ServiceTrackerCustomizer<Manage
 			JavaFxUtils.runAndWait(() -> {
 				window.setManager(mgr);
 			});
-			System.out.println("Manager modified");
 		} catch (InterruptedException | ExecutionException ex) {
 			Logger.getLogger(ManagerTrackerCustomizer.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -71,7 +69,6 @@ public class ManagerTrackerCustomizer implements ServiceTrackerCustomizer<Manage
 			JavaFxUtils.runAndWait(() -> {
 				window.setManager(null);
 			});
-			System.out.println("Manager removed");
 		} catch (InterruptedException | ExecutionException ex) {
 			Logger.getLogger(ManagerTrackerCustomizer.class.getName()).log(Level.SEVERE, null, ex);
 		}
