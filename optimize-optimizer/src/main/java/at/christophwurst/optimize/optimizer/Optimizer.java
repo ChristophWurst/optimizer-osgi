@@ -53,6 +53,13 @@ public interface Optimizer {
 	public boolean isRunning();
 
 	/**
+	 * Get the optimization result
+	 *
+	 * is only a valid value if the optimizer is not running
+	 */
+	public double getResult();
+
+	/**
 	 * Register a new PropertyChangedListener
 	 *
 	 * @param listener

@@ -43,6 +43,7 @@ public class SlowOptimizer extends SimpleOptimizer {
 					Logger.getLogger(SlowOptimizer.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
+			setResult(val * 3);
 			setRunning(false);
 			worker = null;
 		});

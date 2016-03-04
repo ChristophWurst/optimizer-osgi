@@ -18,6 +18,7 @@ package at.christophwurst.optimize.gui;
 
 import at.christophwurst.optimize.manager.Manager;
 import at.christophwurst.optimize.optimizer.Optimizer;
+import at.christophwurst.optimize.utils.JavaFxUtils;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -47,19 +49,29 @@ public class OptimizerWindow {
 	private class OptimizerElement extends BorderPane {
 
 		private final Optimizer optimizer;
-		private final Label label;
+		private final Label name;
+		private final Label result;
 		private final ProgressIndicator progress;
 		private PropertyChangeListener changeListener;
 
 		public OptimizerElement(Optimizer optimizer) {
 			super();
 			this.optimizer = optimizer;
-			this.label = new Label(optimizer.getName());
-			this.progress = new ProgressIndicator(getProgress());
-			super.setTop(label);
+			name = new Label(optimizer.getName());
+			result = new Label(getResultText());
+			result.setAlignment(Pos.CENTER);
+			progress = new ProgressIndicator(getProgress());
+			super.setTop(name);
 			super.setCenter(progress);
+			super.setBottom(result);
 
 			registerEvents();
+		}
+
+		private String getResultText() {
+			System.out.println("running: " + optimizer.isRunning());
+			return "Result: "
+				+ (optimizer.isRunning() ? "–" : String.format("%.2f", optimizer.getResult()));
 		}
 
 		private float getProgress() {
@@ -68,7 +80,10 @@ public class OptimizerWindow {
 
 		private void registerEvents() {
 			changeListener = (PropertyChangeEvent pce) -> {
-				progress.setProgress(getProgress());
+				JavaFxUtils.runLater(() -> {
+					progress.setProgress(getProgress());
+					result.setText(getResultText());
+				});
 			};
 			optimizer.addPropertyChangedListener(changeListener);
 		}

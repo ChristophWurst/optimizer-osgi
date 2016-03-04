@@ -43,6 +43,7 @@ public class FastOptimizer extends SimpleOptimizer {
 					Logger.getLogger(FastOptimizer.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
+			setResult(val * 2.7);
 			setRunning(false);
 			worker = null;
 		});

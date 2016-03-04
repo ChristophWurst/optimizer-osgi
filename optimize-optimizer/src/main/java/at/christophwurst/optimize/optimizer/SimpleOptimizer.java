@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -30,14 +31,16 @@ public abstract class SimpleOptimizer implements Optimizer {
 	protected final PropertyChangeSupport changer;
 	protected final AtomicInteger progress;
 	protected final AtomicBoolean running;
+	protected final AtomicReference<Double> result;
 	protected Thread worker;
 
 	public SimpleOptimizer() {
 		changer = new PropertyChangeSupport(this);
 		progress = new AtomicInteger(0);
 		running = new AtomicBoolean(false);
+		result = new AtomicReference<>(0.0);
 	}
-	
+
 	protected abstract Thread getWorkerThread(double val);
 
 	@Override
@@ -49,12 +52,21 @@ public abstract class SimpleOptimizer implements Optimizer {
 		worker = getWorkerThread(val);
 		worker.start();
 	}
-	
+
 	@Override
 	public boolean isRunning() {
 		return running.get();
 	}
-	
+
+	protected void setResult(double d) {
+		result.set(d);
+	}
+
+	@Override
+	public double getResult() {
+		return result.get();
+	}
+
 	protected void setRunning(boolean val) {
 		boolean oldVal = running.get();
 		running.set(val);
@@ -65,7 +77,7 @@ public abstract class SimpleOptimizer implements Optimizer {
 	public int getProgress() {
 		return progress.get();
 	}
-	
+
 	protected void setProgress(int val) {
 		int oldVal = progress.get();
 		progress.set(val);
