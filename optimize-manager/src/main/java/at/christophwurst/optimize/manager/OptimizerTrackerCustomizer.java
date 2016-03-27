@@ -39,7 +39,6 @@ public class OptimizerTrackerCustomizer implements ServiceTrackerCustomizer<Opti
 	public Optimizer addingService(ServiceReference<Optimizer> sr) {
 		Optimizer opt = bc.getService(sr);
 		mgr.registerOptimizer(opt);
-		System.out.println("Optimizer added to manager: " + opt.getName());
 		return opt;
 	}
 
@@ -47,13 +46,11 @@ public class OptimizerTrackerCustomizer implements ServiceTrackerCustomizer<Opti
 	public void modifiedService(ServiceReference<Optimizer> sr, Optimizer opt) {
 		mgr.unregisterOptimizer(opt);
 		mgr.registerOptimizer(opt);
-		System.out.println("Optimizer modified: " + opt.getName());
 	}
 
 	@Override
 	public void removedService(ServiceReference<Optimizer> sr, Optimizer opt) {
 		mgr.unregisterOptimizer(opt);
-		System.out.println("Optimizer removed from manager: " + opt.getName());
 	}
 
 }

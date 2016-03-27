@@ -69,7 +69,6 @@ public class OptimizerWindow {
 		}
 
 		private String getResultText() {
-			System.out.println("running: " + optimizer.isRunning());
 			return "Result: "
 				+ (optimizer.isRunning() ? "–" : String.format("%.2f", optimizer.getResult()));
 		}
@@ -193,7 +192,6 @@ public class OptimizerWindow {
 	}
 
 	void processEvent(Event event) {
-		System.out.println("Event received: " + event.getTopic());
 		Optimizer optimizer;
 		switch (event.getTopic()) {
 			case "at/christophwurst/optimize/manager/STARTED":

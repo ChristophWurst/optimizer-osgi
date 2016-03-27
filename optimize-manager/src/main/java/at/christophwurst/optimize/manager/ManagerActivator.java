@@ -34,8 +34,6 @@ public class ManagerActivator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bc) throws Exception {
-		System.out.println("Starting manager");
-
 		ServiceReference<EventAdmin> ref = bc.getServiceReference(EventAdmin.class);
 		if (ref != null) {
 			EventAdmin eventAdmin = bc.getService(ref);

@@ -81,6 +81,7 @@ public class Manager {
 			return !opt.isRunning();
 		});
 		if (allFinished) {
+			setRunning(false);
 			Event e = new Event("at/christophwurst/optimize/manager/FINISHED", new HashMap<>());
 			eventAdmin.postEvent(e);
 		}
